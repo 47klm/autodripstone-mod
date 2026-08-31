@@ -5,13 +5,17 @@ Automatyczne tworzenie trapów z dripstone za pomocą klapy (trapdooru).
 ## Jak to działa
 
 1. Postaw **klawę (trapdoor)** w miejscu, gdzie chcesz trap
-2. **Spójrz na klawę** 
-3. **Trzymaj prawy przycisk myszy** (atak)
-4. Mod automatycznie:
-   - Spawnia **zwisający dripstone** nad klawą
-   - Otwiera klawę = dripstone pada
-   - Zamyka klawę = nowy dripstone się pojawia
+2. **Miej dripstone (Pointed Dripstone) w hotbarze**
+3. **Spójrz na klawę** 
+4. **Trzymaj prawy przycisk myszy** (atak)
+5. Mod automatycznie:
+   - **Bierze dripstone z hotbaru gracza**
+   - Stawia go **POD klawą** (zwisający)
+   - Otwiera klawę = dripstone pada na gracza poniżej
+   - Zamyka klawę = bierze następny dripstone z hotbaru
    - Powtarza to w pętli
+
+6. Puść przycisk = stop
 
 ## Konfiguracja
 

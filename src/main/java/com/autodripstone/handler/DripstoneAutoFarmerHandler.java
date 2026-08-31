@@ -6,6 +6,9 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.TrapDoorBlock;
 import net.minecraft.block.PointedDripstoneBlock;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -54,16 +57,25 @@ public class DripstoneAutoFarmerHandler {
 			int counter = TRAPDOOR_TOGGLE_COUNTER.getOrDefault(key, 0) + 1;
 
 			if (counter >= config.trapdoorToggleSpeed) {
-				// Spawn dripstone above trapdoor
-				BlockPos dripstonePos = trapdoorPos.up();
+				// Check if player has dripstone in inventory
+				if (!hasDripstoneInInventory(player)) {
+					return;
+				}
+
+				// Place dripstone BELOW trapdoor
+				BlockPos dripstonePos = trapdoorPos.down();
 				BlockState currentState = world.getBlockState(dripstonePos);
 				
-				// Only spawn if air or replaceable
+				// Only place if air or replaceable
 				if (currentState.isAir() || currentState.getMaterial().isReplaceable()) {
+					// Place hanging dripstone
 					world.setBlockState(dripstonePos, Blocks.POINTED_DRIPSTONE.getDefaultState()
 						.with(PointedDripstoneBlock.VERTICAL_DIRECTION, Direction.DOWN)
 						.with(PointedDripstoneBlock.THICKNESS, PointedDripstoneBlock.Thickness.TIP)
 					);
+					
+					// Consume dripstone from player inventory
+					consumeDripstoneFromInventory(player);
 				}
 
 				// Toggle trapdoor
@@ -87,6 +99,28 @@ public class DripstoneAutoFarmerHandler {
 			}
 		}
 		return null;
+	}
+
+	private static boolean hasDripstoneInInventory(PlayerEntity player) {
+		Inventory inventory = player.getInventory();
+		for (int i = 0; i < inventory.size(); i++) {
+			ItemStack stack = inventory.getStack(i);
+			if (stack.getItem() == Items.POINTED_DRIPSTONE && !stack.isEmpty()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static void consumeDripstoneFromInventory(PlayerEntity player) {
+		Inventory inventory = player.getInventory();
+		for (int i = 0; i < inventory.size(); i++) {
+			ItemStack stack = inventory.getStack(i);
+			if (stack.getItem() == Items.POINTED_DRIPSTONE && !stack.isEmpty()) {
+				stack.decrement(1);
+				return;
+			}
+		}
 	}
 
 	public static void setPlayerRightClickState(PlayerEntity player, boolean isRightClicking) {
